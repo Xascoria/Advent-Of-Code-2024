@@ -39,4 +39,3 @@ for i in b.strip().split():
 
 print(mid)
 print(umid)
-
