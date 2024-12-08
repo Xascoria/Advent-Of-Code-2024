@@ -13,7 +13,7 @@ for i in c.split("\n"):
         r = set()
         for k in c:
             r |= {k * b[j], k + b[j], int(str(k) + str(b[j]))}
-        c = r
+        c = {i for i in r if i <= a}
     if a in c:
         final += a
 
