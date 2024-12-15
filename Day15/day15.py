@@ -117,18 +117,10 @@ def allow_push_box(cur_coord, direction):
                 return (False, set())
     return (True, output | {cur_coord})
 
-f2 = open("Day15\debug.txt","w+")
-def debug_write(d):
-    f2.write("State before:"+d+"\n")
-    for i in m:
-        f2.write("".join(i) + "\n")
-
 for i in b:
-    debug_write(i)
     cur_dir = direction[i]
     nc = (start_coord[0] + cur_dir[0], start_coord[1] + cur_dir[1])
     if m[nc[0]][nc[1]]== "#":
-        
         continue
     if m[nc[0]][nc[1]] == ".":
         m[start_coord[0]][start_coord[1]] = "."
@@ -137,8 +129,6 @@ for i in b:
         continue
     
     if i == ">" or i == "<":
-        #for k in m:print("".join(k))
-
         could_find_blank_space = False
         nx = nc[0]
         ny = nc[1]
@@ -169,8 +159,6 @@ for i in b:
             res2 = allow_push_box((nc[0], nc[1] + 1), cur_dir)
         elif m[nc[0]][nc[1]] == "]":
             res2 = allow_push_box((nc[0], nc[1] - 1), cur_dir)
-        else:
-            print("WHAT err")
         if not res2[0]:
             continue
         all_affected_coords = res1[1] | res2[1]
@@ -187,15 +175,9 @@ for i in b:
                 ny = j[1] + cur_dir[1]
                 m[nx][ny] = m[j[0]][j[1]]
                 m[j[0]][j[1]] = "."
-
-        
         m[start_coord[0]][start_coord[1]] = "."
         m[nc[0]][nc[1]] = "@"
         start_coord = nc
-        # print("State AF:")
-        # for k in m:print("".join(k))
-
-
 
 output = 0
 for i,j in enumerate(m):
