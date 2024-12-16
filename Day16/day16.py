@@ -1,7 +1,6 @@
 import heapq
 
 f = open("Day16\day16.txt", "r")
-
 c = f.read().strip().split("\n")
 
 end_coord = None
@@ -35,32 +34,20 @@ while priority_queue:
         continue
 
     cur_dir_index = directions.index(cur_dir)
-
     oppo_dir_index = (cur_dir_index + 2)%4
     left_index, right_index = (cur_dir_index - 1)%4, (cur_dir_index + 1)%4
 
-    if current_distance + 1000 <= shortest_dist[cur_coord][directions[left_index]]:
-        if current_distance + 1000 == shortest_dist[cur_coord][directions[left_index]]:
-            prev_node[(cur_coord,directions[left_index])] |= {current_node}
-        else:
-            prev_node[(cur_coord,directions[left_index])] = {current_node}
-            heapq.heappush(priority_queue, (current_distance + 1000, (cur_coord,directions[left_index])))
-        shortest_dist[cur_coord][directions[left_index]] = current_distance + 1000
-    if current_distance + 1000 <= shortest_dist[cur_coord][directions[right_index]]:
-        if current_distance + 1000 == shortest_dist[cur_coord][directions[right_index]]:
-            prev_node[(cur_coord,directions[right_index])] |= {current_node}
-        else:
-            prev_node[(cur_coord,directions[right_index])] = {current_node}
-            heapq.heappush(priority_queue, (current_distance + 1000, (cur_coord,directions[right_index])))
-        shortest_dist[cur_coord][directions[right_index]] = current_distance + 1000
-        
-    if current_distance + 2000 <= shortest_dist[cur_coord][directions[oppo_dir_index]]:
-        if current_distance + 2000 == shortest_dist[cur_coord][directions[oppo_dir_index]]:
-            prev_node[(cur_coord,directions[oppo_dir_index])] |= {current_node}
-        else:
-            prev_node[(cur_coord,directions[oppo_dir_index])] = {current_node}
-            heapq.heappush(priority_queue, (current_distance + 2000, (cur_coord,directions[oppo_dir_index])))
-        shortest_dist[cur_coord][directions[oppo_dir_index]] = current_distance + 2000
+    direction_distances = [current_distance + 1000, current_distance + 1000, current_distance + 2000]
+    new_direction_arr = [directions[left_index], directions[right_index], directions[oppo_dir_index]]
+
+    for p in range(3):
+        if direction_distances[p] <= shortest_dist[cur_coord][new_direction_arr[p]]:
+            if direction_distances[p] == shortest_dist[cur_coord][new_direction_arr[p]]:
+                prev_node[(cur_coord, new_direction_arr[p])] |= {current_node}
+            else:
+                prev_node[(cur_coord, new_direction_arr[p])] = {current_node}
+                heapq.heappush(priority_queue, (direction_distances[p], (cur_coord,new_direction_arr[p])))
+            shortest_dist[cur_coord][new_direction_arr[p]] = direction_distances[p]
     if c[cur_coord[0] + cur_dir[0]][cur_coord[1] + cur_dir[1]] != "#":
         nc = (cur_coord[0] + cur_dir[0], cur_coord[1] + cur_dir[1])
         if current_distance + 1 <= shortest_dist[nc][cur_dir]:
