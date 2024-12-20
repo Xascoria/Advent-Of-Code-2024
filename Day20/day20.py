@@ -18,40 +18,50 @@ for j, i in enumerate(c):
 def is_in_range(x, y):
     return 0 <= x < len(c) and 0 <= y < len(c)
 
-def dijkstra(cheat_set = set()):
-    shortest_dist = {}
-    shortest_dist[start_coord] = 0
-
+def bfs(start_coord, matrix):
+    matrix[start_coord[0]][start_coord[1]] = 0
     priority_queue = [(0, start_coord)]
     while priority_queue:
         current_distance, current_node = heapq.heappop(priority_queue)
+
+        if matrix[current_node[0]][current_node[1]] < current_distance:
+            continue
         
         for d in directions:
             nx = d[0] + current_node[0]
             ny = d[1] + current_node[1]
-            if is_in_range(nx, ny) and (c[nx][ny] != "#" or (nx, ny) in cheat_set):
-                if current_distance + 1 < shortest_dist.get((nx, ny), float("inf")):
-                    shortest_dist[(nx, ny)] = current_distance + 1
-                    heapq.heappush( priority_queue, ( current_distance + 1, (nx, ny) ) )
-        
-        if end_coord in shortest_dist:
-            break
-    return shortest_dist[end_coord]
+            if is_in_range(nx, ny) and c[nx][ny] != "#" and current_distance + 1 < matrix[nx][ny]:
+                matrix[nx][ny] = current_distance + 1
+                heapq.heappush( priority_queue, (current_distance + 1, (nx, ny)) )
 
-shortest = dijkstra()
+bfs_start_matrix = [[float("inf")]  * len(c) for _ in range(len(c))]
+bfs_end_matrix = [[float("inf")]  * len(c) for _ in range(len(c))]
 
-off_dir = [(0, 1), (1,0)]
+bfs(start_coord, bfs_start_matrix)
+bfs(end_coord, bfs_end_matrix)
+
+shortest = bfs_start_matrix[end_coord[0]][end_coord[1]]
+
+relative_coords_to_check = set()
+CHEAT_TIME = 20
+for i in range(-CHEAT_TIME, CHEAT_TIME+1):
+    for j in range(-CHEAT_TIME, CHEAT_TIME+1):
+        if i == j == 0:
+            continue
+        if abs(i) + abs(j) <= CHEAT_TIME:
+            relative_coords_to_check.add( (i,j) )
+
 out = 0
-concern_set = {}
 for i in range(len(c)):
     for j in range(len(c)):
-        if c[i][j] == "#":
-            p = dijkstra( {(i, j)} )
-            if p + 100 <=  shortest:
-                out += 1
-                saved_time = shortest - p
-                #concern_set[saved_time] = concern_set.get(saved_time, set()) | {(i,j)}
-    print("Progress:",i)
+        if c[i][j] != "#":
+            sv = bfs_start_matrix[i][j]
+            for m in relative_coords_to_check:
+                nx = i + m[0]
+                ny = j + m[1]
+                if is_in_range(nx, ny) and c[nx][ny] != "#":
+                    ev = bfs_end_matrix[nx][ny]
+                    if sv + ev + abs(m[0]) + abs(m[1]) + 100<= shortest:
+                        out += 1
 
-print(shortest)
 print(out)
