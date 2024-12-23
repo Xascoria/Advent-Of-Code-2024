@@ -24,11 +24,9 @@ for i in p:
             c += 1
             break
 print(c)
-
-max_set = []
+max_set, *_ = p
 for i in range(len(arr)):
-    
-    for j in range(1, len( connect[arr[i]] )+1):
+    for j in range(len(max_set), len( connect[arr[i]] )+1):
         combis = itertools.combinations(connect[arr[i]], j)
         for c in combis:
             starting_set = list({ arr[i] } | {*c })
@@ -42,6 +40,5 @@ for i in range(len(arr)):
                         break
                 if not is_connected:
                     break
-            if is_connected and len(starting_set) > len(max_set):
-                max_set = starting_set
+            if is_connected: max_set = starting_set
 print(*sorted(max_set),sep=',')
